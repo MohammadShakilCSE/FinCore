@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.iml
+TestResults/
+coverage/
+frontend/node_modules/
