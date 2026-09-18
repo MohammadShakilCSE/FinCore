@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FinCore.Application\FinCore.Application.csproj" />
+    <ProjectReference Include="..\FinCore.Infrastructure\FinCore.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

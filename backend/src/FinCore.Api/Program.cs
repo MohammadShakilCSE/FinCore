@@ -1,10 +1,18 @@
+using FinCore.Application.Abstractions.Persistence;
+using FinCore.Application.Features.Wallets;
+using FinCore.Infrastructure.Persistence.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddSingleton<IWalletRepository, InMemoryWalletRepository>();
+builder.Services.AddScoped<CreateWalletHandler>();
+
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
