@@ -1,12 +1,13 @@
 ﻿using FinCore.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FinCore.Application.Abstractions.Persistence
 {
     public interface IWalletRepository
     {
-        Task AddAsync( Wallet wallet, CancellationToken cancellationToken = default);
+        // Completes only after the wallet has been persisted.
+        Task AddAsync(Wallet wallet, CancellationToken cancellationToken = default);
+
+        // Returns a read-only snapshot; changes to the result are not automatically persisted.
+        Task<Wallet?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     }
 }

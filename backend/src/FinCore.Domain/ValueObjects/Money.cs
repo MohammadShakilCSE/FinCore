@@ -15,7 +15,15 @@ public sealed record Money
             throw new DomainException("Currency is required.");
 
         Amount = amount;
-        Currency = currency.Trim().ToUpperInvariant();
+        var normalizedCurrency = currency.Trim().ToUpperInvariant();
+        if (normalizedCurrency.Length != 3 || normalizedCurrency.Any(character => character < 'A' || character > 'Z'))
+            throw new DomainException("Currency must contain exactly three letters.");
+
+        // FinCore currently supports up to four fractional digits, without silent rounding.
+        if (amount > 999_999_999_999_999.9999m || decimal.Round(amount, 4) != amount)
+            throw new DomainException("Amount must fit 15 whole digits and at most four decimal places.");
+
+        Currency = normalizedCurrency;
     }
 
     public Money Add(Money other)

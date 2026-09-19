@@ -1,6 +1,14 @@
 @FinCore.Api_HostAddress = http://localhost:5196
 
-GET {{FinCore.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Create a wallet; copy walletId from the response into the GET request.
+POST {{FinCore.Api_HostAddress}}/api/wallets
+Content-Type: application/json
 
-###
+{
+  "ownerId": "fe0bf5cf-b3ca-4d4f-8f9b-92c1d5f3eb1e",
+  "currency": "BDT"
+}
+
+### Retrieve a wallet (replace this ID with the returned walletId).
+GET {{FinCore.Api_HostAddress}}/api/wallets/00000000-0000-0000-0000-000000000001
+Accept: application/json

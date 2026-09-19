@@ -1,35 +1,33 @@
-﻿using FinCore.Api.Contracts.Requests;
+using FinCore.Api.Contracts.Requests;
 using FinCore.Application.Features.Wallets;
-using Microsoft.AspNetCore.Http;
+using FinCore.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FinCore.Api.Controllers
+namespace FinCore.Api.Controllers;
+
+[Route("api/wallets")]
+[ApiController]
+public sealed class WalletsController(CreateWalletHandler createHandler, GetWalletHandler getHandler) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public sealed class WalletsController : ControllerBase
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateWalletRequest request, CancellationToken cancellationToken)
     {
-        private readonly CreateWalletHandler _handler;
-
-        public WalletsController(CreateWalletHandler handler)
+        try
         {
-            _handler = handler;
+            var result = await createHandler.HandleAsync(
+                new CreateWalletCommand(request.OwnerId, request.Currency), cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = result.WalletId }, result);
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(
-            CreateWalletRequest request,
-            CancellationToken cancellationToken)
+        catch (DomainException exception)
         {
-            var command = new CreateWalletCommand(
-                request.OwnerId,
-                request.Currency);
-
-            var result = await _handler.HandleAsync(
-                command,
-                cancellationToken);
-
-            return Ok(result);
+            return Problem(statusCode: StatusCodes.Status400BadRequest, title: exception.Message);
         }
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await getHandler.HandleAsync(new GetWalletQuery(id), cancellationToken);
+        return result is null ? NotFound() : Ok(result);
     }
 }
