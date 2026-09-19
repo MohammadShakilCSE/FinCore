@@ -1,5 +1,9 @@
 # Demo Deposit
 
+Current progress: [Wallet optimistic concurrency](wallet-concurrency.md) now protects
+stale writes from deposits and transfers. The concurrency limitations below describe
+the earlier demo-deposit lesson; idempotency and reconciliation are still pending.
+
 Demo Deposit adds simulated money to an existing wallet. It is a learning operation,
 not a payment, bank deposit, or ledger transaction. No additional infrastructure or
 database migration is needed: the existing balance column stores the result.

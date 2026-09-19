@@ -1,4 +1,6 @@
 using FinCore.Application.Features.Wallets;
+using FinCore.Application.Features.Transfers.TransferMoney;
+using FinCore.Application.Features.Transfers.GetTransferAttempt;
 using FinCore.Application.Features.Wallets.DemoDeposit;
 using FinCore.Infrastructure;
 using FinCore.Api.Middleware;
@@ -12,6 +14,8 @@ builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("Fi
 builder.Services.AddScoped<CreateWalletHandler>();
 builder.Services.AddScoped<GetWalletHandler>();
 builder.Services.AddScoped<DemoDepositHandler>();
+builder.Services.AddScoped<TransferMoneyHandler>();
+builder.Services.AddScoped<GetTransferAttemptHandler>();
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();

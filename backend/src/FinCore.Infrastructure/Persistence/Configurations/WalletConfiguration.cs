@@ -19,6 +19,7 @@ public sealed class WalletConfiguration : IEntityTypeConfiguration<Wallet>
         builder.HasKey(wallet => wallet.Id);
         builder.Property(wallet => wallet.Id).ValueGeneratedNever();
         builder.Property(wallet => wallet.OwnerId).IsRequired();
+        builder.Property(wallet => wallet.Version).IsRequired().IsConcurrencyToken();
         builder.Property(wallet => wallet.Currency).HasMaxLength(3).IsRequired();
         builder.Property(wallet => wallet.Status).HasConversion<string>().HasMaxLength(16).IsRequired();
         builder.Property(wallet => wallet.CreatedAt).HasColumnType("timestamp with time zone").IsRequired();

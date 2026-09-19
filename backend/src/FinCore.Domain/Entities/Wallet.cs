@@ -10,6 +10,7 @@ public sealed class Wallet : AggregateRoot
     public string Currency { get; private set; } = string.Empty;
     public Money Balance { get; private set; } = null!; 
     public WalletStatus Status { get; private set; }
+    public int Version { get; private set; }
     private Wallet()
     {
     }
@@ -31,7 +32,8 @@ public sealed class Wallet : AggregateRoot
             OwnerId = ownerId,
             Currency = normalizedCurrency,
             Balance = new Money(0, normalizedCurrency),
-            Status = WalletStatus.Active
+            Status = WalletStatus.Active,
+            Version = 1
         };
 
         return wallet;
@@ -46,6 +48,7 @@ public sealed class Wallet : AggregateRoot
                 "Credit amount must be greater than zero.");
 
         Balance = Balance.Add(money);
+        Version++;
     }
 
     public void Debit(Money money)
@@ -62,6 +65,7 @@ public sealed class Wallet : AggregateRoot
                 "Insufficient wallet balance.");
 
         Balance = Balance.Subtract(money);
+        Version++;
     }
 
   public void Suspend()
@@ -71,6 +75,7 @@ public sealed class Wallet : AggregateRoot
                 "Wallet is already suspended.");
 
         Status = WalletStatus.Suspended;
+        Version++;
     }
 
  public void Activate()
@@ -79,7 +84,9 @@ public sealed class Wallet : AggregateRoot
             throw new DomainException(
                 "Closed wallet cannot be activated.");
 
+        if (Status == WalletStatus.Active) return;
         Status = WalletStatus.Active;
+        Version++;
     }
 
     public void Close()
@@ -88,7 +95,9 @@ public sealed class Wallet : AggregateRoot
             throw new DomainException(
                 "Wallet must have zero balance before closing.");
 
+        if (Status == WalletStatus.Suspended) return;
         Status = WalletStatus.Suspended;
+        Version++;
     }
 
     private void EnsureActive()

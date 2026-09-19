@@ -1,4 +1,5 @@
 using FinCore.Domain.Exceptions;
+using FinCore.Application.Exceptions;
 using System.Net;
 using System.Text.Json;
 
@@ -22,6 +23,37 @@ public sealed class ExceptionHandlingMiddleware
         try
         {
             await _next(context);
+        }
+        catch (Exception exception) when (!context.Response.HasStarted &&
+            exception is IdempotencyConflictException or IdempotencyInProgressException or AuthenticationRequiredException or WalletAccessDeniedException)
+        {
+            context.Response.Clear();
+            context.Response.StatusCode = exception switch
+            {
+                AuthenticationRequiredException => StatusCodes.Status401Unauthorized,
+                WalletAccessDeniedException => StatusCodes.Status403Forbidden,
+                _ => StatusCodes.Status409Conflict
+            };
+            if (exception is IdempotencyInProgressException) context.Response.Headers.RetryAfter = "2";
+            context.Response.ContentType = "application/problem+json";
+            await context.Response.WriteAsync(JsonSerializer.Serialize(new
+            {
+                status = context.Response.StatusCode,
+                title = "Transfer request could not be completed",
+                detail = exception.Message
+            }));
+        }
+        catch (ConcurrencyConflictException) when (!context.Response.HasStarted)
+        {
+            context.Response.Clear();
+            context.Response.StatusCode = StatusCodes.Status409Conflict;
+            context.Response.ContentType = "application/problem+json";
+            await context.Response.WriteAsync(JsonSerializer.Serialize(new
+            {
+                status = StatusCodes.Status409Conflict,
+                title = "Wallet concurrency conflict",
+                detail = "The wallet changed during the operation. Please refresh and try again."
+            }));
         }
         catch (DomainException exception)
         {

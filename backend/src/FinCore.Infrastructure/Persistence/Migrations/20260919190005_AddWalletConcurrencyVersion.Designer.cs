@@ -3,6 +3,7 @@ using System;
 using FinCore.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinCore.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FinCoreDbContext))]
-    partial class FinCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260919190005_AddWalletConcurrencyVersion")]
+    partial class AddWalletConcurrencyVersion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,63 +24,6 @@ namespace FinCore.Infrastructure.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("FinCore.Application.Idempotency.IdempotencyRecord", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("IdempotencyKey")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
-                        .UseCollation("C");
-
-                    b.Property<string>("Operation")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
-                        .UseCollation("C");
-
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("RequestFingerprint")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<string>("ResponsePayload")
-                        .HasMaxLength(4096)
-                        .HasColumnType("character varying(4096)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
-
-                    b.Property<Guid?>("TransactionId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TransactionId");
-
-                    b.HasIndex("OwnerId", "Operation", "IdempotencyKey")
-                        .IsUnique()
-                        .HasDatabaseName("UX_IdempotencyRecords_Owner_Operation_Key");
-
-                    b.ToTable("IdempotencyRecords", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_IdempotencyRecords_Lifecycle", "(\"Status\" = 'Processing' AND \"TransactionId\" IS NULL AND \"ResponsePayload\" IS NULL AND \"CompletedAt\" IS NULL) OR (\"Status\" = 'Completed' AND \"TransactionId\" IS NOT NULL AND \"ResponsePayload\" IS NOT NULL AND \"CompletedAt\" IS NOT NULL)");
-                        });
-                });
 
             modelBuilder.Entity("FinCore.Domain.Entities.LedgerEntry", b =>
                 {
@@ -175,14 +121,6 @@ namespace FinCore.Infrastructure.Persistence.Migrations
 
                             t.HasCheckConstraint("CK_Wallets_Status", "\"Status\" IN ('Active', 'Inactive', 'Suspended')");
                         });
-                });
-
-            modelBuilder.Entity("FinCore.Application.Idempotency.IdempotencyRecord", b =>
-                {
-                    b.HasOne("FinCore.Domain.Entities.LedgerTransaction", null)
-                        .WithMany()
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("FinCore.Domain.Entities.LedgerEntry", b =>
