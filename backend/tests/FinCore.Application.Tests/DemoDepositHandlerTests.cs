@@ -2,7 +2,7 @@ using FinCore.Application.Abstractions.Persistence;
 using FinCore.Application.Features.Wallets.DemoDeposit;
 using FinCore.Domain.Entities;
 using FinCore.Domain.Exceptions;
-using FinCore.valueObjects;
+using FinCore.Domain.ValueObjects;
 
 namespace FinCore.Application.Tests;
 

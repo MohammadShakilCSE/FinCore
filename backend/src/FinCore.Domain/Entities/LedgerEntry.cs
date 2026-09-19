@@ -43,7 +43,8 @@ public sealed class LedgerEntry : Entity
             LedgerTransactionId = transactionId,
             WalletId = walletId,
             EntryType = entryType,
-            Amount = amount
+            // Each entry owns a separate instance with the same monetary value.
+            Amount = new Money(amount.Amount, amount.Currency)
         };
     }
 }

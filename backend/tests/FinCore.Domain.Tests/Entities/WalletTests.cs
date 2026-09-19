@@ -1,7 +1,7 @@
-﻿using FinCore.Domain.Entities;
+using FinCore.Domain.Entities;
 using FinCore.Domain.Enums;
 using FinCore.Domain.Exceptions;
-using FinCore.valueObjects;
+using FinCore.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;

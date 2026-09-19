@@ -1,5 +1,5 @@
 using FinCore.Application.Abstractions.Persistence;
-using FinCore.valueObjects;
+using FinCore.Domain.ValueObjects;
 
 namespace FinCore.Application.Features.Wallets.DemoDeposit;
 

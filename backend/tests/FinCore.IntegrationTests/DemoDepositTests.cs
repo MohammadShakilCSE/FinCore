@@ -2,7 +2,7 @@ using FinCore.Application.Features.Wallets.DemoDeposit;
 using FinCore.Domain.Entities;
 using FinCore.Domain.Exceptions;
 using FinCore.Infrastructure.Persistence.Repositories;
-using FinCore.valueObjects;
+using FinCore.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinCore.IntegrationTests;
