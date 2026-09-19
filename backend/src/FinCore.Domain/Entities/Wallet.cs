@@ -1,7 +1,7 @@
 namespace FinCore.Domain.Entities;
 using FinCore.Domain.Common;
 using FinCore.Domain.Enums;
-using FinCore.valueObjects;
+using FinCore.Domain.ValueObjects;
 using FinCore.Domain.Exceptions;
 
 public sealed class Wallet : AggregateRoot

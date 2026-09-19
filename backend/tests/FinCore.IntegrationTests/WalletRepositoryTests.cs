@@ -1,7 +1,7 @@
 using FinCore.Domain.Entities;
 using FinCore.Domain.Enums;
 using FinCore.Infrastructure.Persistence.Repositories;
-using FinCore.valueObjects;
+using FinCore.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 

@@ -1,6 +1,7 @@
-namespace FinCore.valueObjects;
+
 using FinCore.Domain.Exceptions;
 
+namespace FinCore.Domain.ValueObjects;
 public sealed record Money
 {
     public decimal Amount { get; }

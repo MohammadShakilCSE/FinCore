@@ -15,4 +15,10 @@ public sealed class WalletRepository(FinCoreDbContext context) : IWalletReposito
 
     public Task<Wallet?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         => context.Wallets.AsNoTracking().SingleOrDefaultAsync(wallet => wallet.Id == id, cancellationToken);
+
+    public Task<Wallet?> GetTrackedByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        => context.Wallets.AsTracking().SingleOrDefaultAsync(wallet => wallet.Id == id, cancellationToken);
+
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        => await context.SaveChangesAsync(cancellationToken);
 }

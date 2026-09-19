@@ -1,5 +1,5 @@
 using FinCore.Domain.Exceptions;
-using FinCore.valueObjects;
+using FinCore.Domain.ValueObjects;
 
 namespace FinCore.Domain.Tests.Entities;
 

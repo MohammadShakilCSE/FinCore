@@ -12,3 +12,13 @@ Content-Type: application/json
 ### Retrieve a wallet (replace this ID with the returned walletId).
 GET {{FinCore.Api_HostAddress}}/api/wallets/00000000-0000-0000-0000-000000000001
 Accept: application/json
+
+### Demo deposit: Development/Testing only, with DemoDeposits:Enabled=true.
+# Simulated funds only. Replace the ID with the walletId returned by Create.
+POST {{FinCore.Api_HostAddress}}/api/wallets/00000000-0000-0000-0000-000000000001/demo-deposits
+Content-Type: application/json
+
+{
+  "amount": 500,
+  "currency": "BDT"
+}
