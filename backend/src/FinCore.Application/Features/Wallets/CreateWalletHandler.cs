@@ -8,11 +8,13 @@ namespace FinCore.Application.Features.Wallets
 {
     public sealed class CreateWalletHandler
     {
+        private readonly FinCore.Application.Abstractions.Authentication.ICurrentUser _currentUser;
         private readonly IWalletRepository _walletRepository;
 
-        public CreateWalletHandler(IWalletRepository walletRepository)
+        public CreateWalletHandler(IWalletRepository walletRepository, FinCore.Application.Abstractions.Authentication.ICurrentUser currentUser)
         {
             _walletRepository = walletRepository;
+            _currentUser = currentUser;
         }
 
         public async Task<CreateWalletResult> HandleAsync(
@@ -20,7 +22,7 @@ namespace FinCore.Application.Features.Wallets
             CancellationToken cancellationToken = default)
         {
             var wallet = Wallet.Create(
-                command.OwnerId,
+                _currentUser.UserId,
                 command.Currency);
 
             await _walletRepository.AddAsync(

@@ -10,6 +10,8 @@ public sealed class PostgresFixture : IAsyncLifetime
     private string? _adminConnection;
     private string? _testConnection;
 
+    public string ConnectionString => _testConnection ?? throw new InvalidOperationException("PostgreSQL is not configured.");
+
     public FinCoreDbContext CreateContext() => new(new DbContextOptionsBuilder<FinCoreDbContext>()
         .UseNpgsql(_testConnection ?? throw new InvalidOperationException("Set FinCore_TestConnectionString."))
         .Options);

@@ -1,24 +1,21 @@
 using FinCore.Api.Contracts.Requests;
 using FinCore.Application.Features.Wallets;
-using FinCore.Application.Features.Wallets.DemoDeposit;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinCore.Api.Controllers;
 
 [Route("api/wallets")]
 [ApiController]
+[Microsoft.AspNetCore.Authorization.Authorize]
 public sealed class WalletsController(
     CreateWalletHandler createHandler,
-    GetWalletHandler getHandler,
-    DemoDepositHandler demoDepositHandler,
-    IHostEnvironment environment,
-    IConfiguration configuration) : ControllerBase
+    GetWalletHandler getHandler) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Create(CreateWalletRequest request, CancellationToken cancellationToken)
     {
         var result = await createHandler.HandleAsync(
-            new CreateWalletCommand(request.OwnerId, request.Currency), cancellationToken);
+            new CreateWalletCommand(request.Currency), cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = result.WalletId }, result);
     }
 
@@ -30,16 +27,10 @@ public sealed class WalletsController(
     }
 
     [HttpPost("{walletId:guid}/demo-deposits")]
-    public async Task<IActionResult> DemoDeposit(
+    public Task<IActionResult> DemoDeposit(
         Guid walletId, DemoDepositRequest request, CancellationToken cancellationToken)
     {
-        // Simulated funds only: a flag alone must never enable this in production.
-        if (!(environment.IsDevelopment() || environment.IsEnvironment("Testing")) ||
-            !configuration.GetValue<bool>("DemoDeposits:Enabled"))
-            return NotFound();
-
-        var result = await demoDepositHandler.HandleAsync(
-            new DemoDepositCommand(walletId, request.Amount, request.Currency), cancellationToken);
-        return result is null ? NotFound() : Ok(result);
+        // Public funding is disabled until an appropriate operator authorization mechanism exists.
+        return Task.FromResult<IActionResult>(NotFound());
     }
 }

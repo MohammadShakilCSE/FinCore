@@ -7,6 +7,7 @@ namespace FinCore.Infrastructure.Persistence.Context;
 
 public sealed class FinCoreDbContext(DbContextOptions<FinCoreDbContext> options) : DbContext(options)
 {
+    public DbSet<User> Users => Set<User>();
     public DbSet<Wallet> Wallets => Set<Wallet>();
     public DbSet<LedgerTransaction> LedgerTransactions => Set<LedgerTransaction>();
     public DbSet<LedgerEntry> LedgerEntries => Set<LedgerEntry>();

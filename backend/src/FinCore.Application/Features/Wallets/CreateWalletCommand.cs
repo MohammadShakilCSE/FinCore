@@ -4,5 +4,5 @@ using System.Text;
 
 namespace FinCore.Application.Features.Wallets
 {
-    public sealed record CreateWalletCommand(Guid OwnerId, string Currency);
+    public sealed record CreateWalletCommand(string Currency);
 }

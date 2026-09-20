@@ -1,24 +1,61 @@
 @FinCore.Api_HostAddress = http://localhost:5196
+@accessToken = paste-login-access-token-here
+@walletId = 00000000-0000-0000-0000-000000000001
 
-### Create a wallet; copy walletId from the response into the GET request.
+### Register
+POST {{FinCore.Api_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Shakil",
+  "email": "shakil@example.com",
+  "password": "ExamplePassword123!"
+}
+
+### Login; copy accessToken into the variable above.
+POST {{FinCore.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "shakil@example.com",
+  "password": "ExamplePassword123!"
+}
+
+### Current customer
+GET {{FinCore.Api_HostAddress}}/api/auth/me
+Authorization: Bearer {{accessToken}}
+
+### Create wallet; ownership comes from the token.
 POST {{FinCore.Api_HostAddress}}/api/wallets
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{ "currency": "BDT" }
+
+### Own wallet
+GET {{FinCore.Api_HostAddress}}/api/wallets/{{walletId}}
+Authorization: Bearer {{accessToken}}
+
+### Public demo deposits are disabled (404 for an authenticated customer).
+POST {{FinCore.Api_HostAddress}}/api/wallets/{{walletId}}/demo-deposits
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{ "amount": 500, "currency": "BDT" }
+
+### Transfer; use distinct sender and receiver wallet IDs.
+POST {{FinCore.Api_HostAddress}}/api/transfers
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "ownerId": "fe0bf5cf-b3ca-4d4f-8f9b-92c1d5f3eb1e",
-  "currency": "BDT"
+  "senderWalletId": "{{walletId}}",
+  "receiverWalletId": "00000000-0000-0000-0000-000000000002",
+  "amount": 100,
+  "currency": "BDT",
+  "idempotencyKey": "example-transfer-1"
 }
 
-### Retrieve a wallet (replace this ID with the returned walletId).
-GET {{FinCore.Api_HostAddress}}/api/wallets/00000000-0000-0000-0000-000000000001
-Accept: application/json
-
-### Demo deposit: Development/Testing only, with DemoDeposits:Enabled=true.
-# Simulated funds only. Replace the ID with the walletId returned by Create.
-POST {{FinCore.Api_HostAddress}}/api/wallets/00000000-0000-0000-0000-000000000001/demo-deposits
-Content-Type: application/json
-
-{
-  "amount": 500,
-  "currency": "BDT"
-}
+### Only the initiating customer can retrieve this attempt.
+GET {{FinCore.Api_HostAddress}}/api/transfers/attempts/example-transfer-1
+Authorization: Bearer {{accessToken}}

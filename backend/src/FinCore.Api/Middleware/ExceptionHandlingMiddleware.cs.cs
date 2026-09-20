@@ -25,11 +25,12 @@ public sealed class ExceptionHandlingMiddleware
             await _next(context);
         }
         catch (Exception exception) when (!context.Response.HasStarted &&
-            exception is IdempotencyConflictException or IdempotencyInProgressException or AuthenticationRequiredException or WalletAccessDeniedException)
+            exception is DuplicateEmailException or InvalidCredentialsException or IdempotencyConflictException or IdempotencyInProgressException or AuthenticationRequiredException or WalletAccessDeniedException)
         {
             context.Response.Clear();
             context.Response.StatusCode = exception switch
             {
+                InvalidCredentialsException => StatusCodes.Status401Unauthorized,
                 AuthenticationRequiredException => StatusCodes.Status401Unauthorized,
                 WalletAccessDeniedException => StatusCodes.Status403Forbidden,
                 _ => StatusCodes.Status409Conflict
@@ -39,7 +40,7 @@ public sealed class ExceptionHandlingMiddleware
             await context.Response.WriteAsync(JsonSerializer.Serialize(new
             {
                 status = context.Response.StatusCode,
-                title = "Transfer request could not be completed",
+                title = "Request could not be completed",
                 detail = exception.Message
             }));
         }

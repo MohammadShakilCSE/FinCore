@@ -9,3 +9,5 @@ See [architecture](docs/architecture.md) for layer responsibilities.
 
 The [Demo Deposit lesson](docs/demo-deposit.md) explains simulated wallet deposits,
 development/test restrictions, tracked updates, verification, and concurrency limitations.
+
+See [authentication](docs/authentication.md) for JWT setup, customer wallet ownership, and HTTP examples. Public demo deposits are now disabled; this supersedes the earlier demo-deposit endpoint instructions.

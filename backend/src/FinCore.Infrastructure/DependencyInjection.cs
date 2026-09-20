@@ -14,6 +14,8 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
     {
         services.AddDbContext<FinCoreDbContext>(options => options.UseNpgsql(connectionString));
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<FinCore.Application.Abstractions.Authentication.IPasswordService, FinCore.Infrastructure.Authentication.PasswordService>();
         services.AddScoped<IWalletRepository, WalletRepository>();
         services.AddScoped<ILedgerTransactionRepository, LedgerTransactionRepository>();
         services.AddScoped<IIdempotencyRepository, IdempotencyRepository>();
