@@ -8,4 +8,7 @@ obj/
 *.sln.iml
 TestResults/
 coverage/
-frontend/node_modules/
+fincore-web/node_modules/
+fincore-web/dist/
+
+fincore-web/.env*.local

@@ -1,5 +1,7 @@
 # FinCore
 
+The [React frontend](fincore-web/README.md) includes the login page connected to the backend authentication API. Run it with `npm install` and `npm run dev` from `fincore-web`.
+
 FinCore is a fintech backend built with ASP.NET Core and .NET 10 using Clean Architecture.
 Wallet creation and lookup now persist to PostgreSQL through EF Core.
 

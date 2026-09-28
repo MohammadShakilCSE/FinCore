@@ -15,11 +15,11 @@ public sealed class IdempotencyRepository(FinCoreDbContext context) : IIdempoten
         => context.IdempotencyRecords.AsNoTracking().SingleOrDefaultAsync(
             record => record.OwnerId == ownerId && record.Operation == operation && record.IdempotencyKey == key, cancellationToken);
 
-    public async Task<IIdempotencyClaim> ClaimAsync(Guid ownerId, string operation, string key, string fingerprint,
-        CancellationToken cancellationToken = default)
+    public async Task<IIdempotencyClaim> ClaimAsync(Guid ownerId, string operation, string key, string fingerprint,CancellationToken cancellationToken = default)
     {
         if (context.Database.CurrentTransaction is not null)
             throw new InvalidOperationException("An idempotency attempt must own its transaction.");
+
         var existing = await FindAsync(ownerId, operation, key, cancellationToken);
         if (existing is not null) return new Claim(context, existing, null);
 
