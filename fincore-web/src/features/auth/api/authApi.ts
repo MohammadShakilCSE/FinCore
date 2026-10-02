@@ -12,8 +12,8 @@ export async function signIn(email: string, password: string): Promise<Session> 
     if (response.status === 400) throw new Error('Please check your email and password and try again.');
     throw new Error('We couldn’t sign you in right now. Please try again shortly.');
   }
-  const token = await response.json();
-  if (typeof token.accessToken !== 'string' || !token.accessToken || !Number.isFinite(token.expiresIn) || token.expiresIn <= 0) {
+  const token: unknown = await response.json();
+  if (!isRecord(token) || typeof token.accessToken !== 'string' || !token.accessToken || typeof token.expiresIn !== 'number' || !Number.isFinite(token.expiresIn) || token.expiresIn <= 0) {
     throw new Error('The server returned an invalid session. Please try again.');
   }
   const expiresAt = Date.now() + token.expiresIn * 1000;
@@ -21,9 +21,13 @@ export async function signIn(email: string, password: string): Promise<Session> 
     headers: { Authorization: `Bearer ${token.accessToken}` },
   });
   if (!profile.ok) throw new Error('We couldn’t load your account. Please sign in again.');
-  const user = await profile.json();
-  if (typeof user.id !== 'string' || typeof user.name !== 'string' || typeof user.email !== 'string') {
+  const user: unknown = await profile.json();
+  if (!isRecord(user) || typeof user.id !== 'string' || typeof user.name !== 'string' || typeof user.email !== 'string') {
     throw new Error('The server returned an invalid account. Please try again.');
   }
-  return { accessToken: token.accessToken, expiresAt, user };
+  return { accessToken: token.accessToken, expiresAt, user: { id: user.id, name: user.name, email: user.email } };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
